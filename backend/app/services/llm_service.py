@@ -16,7 +16,7 @@ class LLMService:
     def generate_response(
         self,
         system_prompt: str,
-        user_message: str,
+        messages: list[dict],
     ) -> str:
 
         response = self.client.chat.completions.create(
@@ -26,10 +26,7 @@ class LLMService:
                     "role": "system",
                     "content": system_prompt,
                 },
-                {
-                    "role": "user",
-                    "content": user_message,
-                },
+                *messages,
             ],
         )
 
