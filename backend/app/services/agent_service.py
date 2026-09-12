@@ -21,3 +21,16 @@ class AgentService:
             system_prompt=SYSTEM_PROMPT,
             messages=messages,
         )
+
+    def extract_lead(
+        self,
+        session: ConversationSession,
+    ):
+        messages = [
+            message.model_dump()
+            for message in session.messages
+        ]
+
+        return self.llm_service.extract_lead(
+            messages=messages,
+        )

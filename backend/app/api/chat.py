@@ -1,21 +1,20 @@
+import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from app.prompts.sales_agent import SYSTEM_PROMPT
-# from app.services.conversation_service import ConversationService
-# from app.services.llm_service import LLMService
-
 
 from app.services.container import (
     agent_service,
     conversation_service,
-    # llm_service,
 )
 
-router = APIRouter(prefix="/api", tags=["chat"])
+logger = logging.getLogger(__name__)
 
-# conversation_service = ConversationService()
-# llm_service = LLMService()
+
+router = APIRouter(
+    prefix="/api",
+    tags=["chat"],
+)
 
 
 class ChatRequest(BaseModel):
@@ -48,6 +47,17 @@ def chat(request: ChatRequest):
     )
 
     reply = agent_service.respond(session)
+
+    try:
+        extraction = agent_service.extract_lead(session)
+
+        conversation_service.update_lead(
+            request.session_id,
+            extraction,
+        )
+
+    except Exception:
+        logger.exception("Lead extraction failed")
 
     conversation_service.add_message(
         request.session_id,

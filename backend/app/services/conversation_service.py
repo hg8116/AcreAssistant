@@ -45,3 +45,22 @@ class ConversationService:
         )
 
         return session
+
+    def update_lead(
+        self,
+        session_id: str,
+        extraction,
+    ) -> ConversationSession:
+
+        session = self.sessions[session_id]
+
+        data = extraction.model_dump(exclude_none=True)
+
+        for field, value in data.items():
+            setattr(session.lead, field, value)
+
+        return session
+
+
+
+

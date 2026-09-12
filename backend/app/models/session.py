@@ -1,5 +1,21 @@
 from pydantic import BaseModel, Field
 
+class LeadExtraction(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+
+    configuration: str | None = None
+    budget: str | None = None
+    buying_purpose: str | None = None
+    purchase_timeline: str | None = None
+
+    interest_level: str | None = None
+
+    follow_up_required: bool | None = None
+    follow_up_preference: str | None = None
+
+    human_escalation: bool | None = None
+    communication_opt_out: bool | None = None
 
 class LeadState(BaseModel):
     name: str | None = None
