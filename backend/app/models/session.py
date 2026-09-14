@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from app.models.intent import Intent
 
 class LeadExtraction(BaseModel):
     name: str | None = None
@@ -17,6 +18,8 @@ class LeadExtraction(BaseModel):
     human_escalation: bool | None = None
     communication_opt_out: bool | None = None
 
+    intent: Intent | None = None
+
 class LeadState(BaseModel):
     name: str | None = None
     phone: str | None = None
@@ -27,6 +30,8 @@ class LeadState(BaseModel):
     purchase_timeline: str | None = None
 
     interest_level: str | None = None
+    
+    intent: Intent | None = None
 
     site_visit_status: str = "not_discussed"
 

@@ -64,7 +64,8 @@ Return exactly these fields:
   "follow_up_required": null,
   "follow_up_preference": null,
   "human_escalation": null,
-  "communication_opt_out": null
+  "communication_opt_out": null,
+  "intent:": "unknown"
 }
 
 Use null when the information is not known.
@@ -81,6 +82,66 @@ Rules:
 - Do not invent contact information.
 
 Return ONLY the JSON object.
+
+Classify the customer's latest message into exactly one intent.
+
+Available intents:
+
+- general_inquiry
+- project_information
+- requirement
+- price_inquiry
+- objection
+- site_visit
+- follow_up
+- busy
+- not_interested
+- opt_out
+- human_escalation
+- unknown
+
+Intent definitions:
+
+general_inquiry:
+General conversation that does not fit another category.
+
+project_information:
+The customer is asking for factual information about the project.
+
+requirement:
+The customer is expressing what they want, such as configuration, budget, purpose, or timeline.
+
+price_inquiry:
+The customer is specifically asking about price, cost, affordability, discount, or payment amount.
+
+objection:
+The customer expresses a concern, hesitation, or resistance.
+
+site_visit:
+The customer wants to arrange, discuss, reschedule, or cancel a site visit.
+
+follow_up:
+The customer asks to be contacted later or provides a preferred follow-up time.
+
+busy:
+The customer says they are currently busy or cannot continue the conversation now.
+
+not_interested:
+The customer indicates they are not interested but does not explicitly ask to stop all communication.
+
+opt_out:
+The customer explicitly asks not to be contacted or communicated with anymore.
+
+human_escalation:
+The customer asks to speak with a human, salesperson, representative, or agent.
+
+unknown:
+The intent cannot be confidently classified.
+
+The "intent" field must contain exactly one of the supported intent values.
+
+Return ONLY a valid JSON object.
+Do not return markdown, explanations, safety labels, or any other text.
 """
 
         response = self.client.chat.completions.create(
