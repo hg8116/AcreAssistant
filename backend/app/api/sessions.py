@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 
-# from app.services.conversation_service import ConversationService
 from app.services.container import (
     conversation_service,
 )
@@ -10,9 +9,6 @@ router = APIRouter(
     prefix="/api/sessions",
     tags=["sessions"],
 )
-
-# conversation_service = ConversationService()
-
 
 @router.post("")
 def create_session():

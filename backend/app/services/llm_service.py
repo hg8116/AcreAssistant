@@ -65,7 +65,9 @@ Return exactly these fields:
   "follow_up_preference": null,
   "human_escalation": null,
   "communication_opt_out": null,
-  "intent:": "unknown"
+  "intent:": "unknown",
+  "preferred_date": null,
+  "preferred_time": null
 }
 
 Use null when the information is not known.
@@ -137,6 +139,12 @@ The customer asks to speak with a human, salesperson, representative, or agent.
 
 unknown:
 The intent cannot be confidently classified.
+
+For site visit requests:
+- Extract the preferred date only when explicitly stated.
+- Extract the preferred time only when explicitly stated.
+- Do not convert ambiguous expressions into exact dates unless the meaning is clear.
+- Do not claim that a site visit has been booked.
 
 The "intent" field must contain exactly one of the supported intent values.
 

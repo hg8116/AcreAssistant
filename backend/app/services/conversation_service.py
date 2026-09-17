@@ -61,6 +61,18 @@ class ConversationService:
 
         return session
 
+    def update_booking(
+        self,
+        session_id: str,
+        booking,
+    ) -> ConversationSession:
+
+        session = self.sessions[session_id]
+
+        session.booking = booking
+
+        return session
+
 
 
 

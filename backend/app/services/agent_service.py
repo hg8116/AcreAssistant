@@ -34,3 +34,13 @@ class AgentService:
         return self.llm_service.extract_lead(
             messages=messages,
         )
+
+    def has_booking_details(self, session) -> bool:
+        lead = session.lead
+
+        return all([
+            lead.name,
+            lead.phone,
+            lead.preferred_date,
+            lead.preferred_time,
+        ])

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from app.models.intent import Intent
+from app.models.booking import SiteVisitBooking
 
 class LeadExtraction(BaseModel):
     name: str | None = None
@@ -19,6 +20,9 @@ class LeadExtraction(BaseModel):
     communication_opt_out: bool | None = None
 
     intent: Intent | None = None
+
+    preferred_date: str | None = None
+    preferred_time: str | None = None
 
 class LeadState(BaseModel):
     name: str | None = None
@@ -43,6 +47,9 @@ class LeadState(BaseModel):
 
     conversation_status: str = "active"
 
+    preferred_date: str | None = None
+    preferred_time: str | None = None
+
 
 class Message(BaseModel):
     role: str
@@ -53,3 +60,6 @@ class ConversationSession(BaseModel):
     session_id: str
     messages: list[Message] = Field(default_factory=list)
     lead: LeadState = Field(default_factory=LeadState)
+    booking: SiteVisitBooking = Field(
+        default_factory=SiteVisitBooking
+    )
