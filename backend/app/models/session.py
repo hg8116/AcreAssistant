@@ -63,3 +63,4 @@ class ConversationSession(BaseModel):
     booking: SiteVisitBooking = Field(
         default_factory=SiteVisitBooking
     )
+    intent_history: list[str] = Field(default_factory=list)

@@ -29,3 +29,7 @@ class ConversationAnalytics(BaseModel):
     generated_at: datetime = Field(
         default_factory=datetime.now
     )
+
+    qualification_fields_completed: int = 0
+    qualification_fields_total: int = 5
+    qualification_completeness_percentage: float = 0.0

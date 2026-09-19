@@ -27,12 +27,11 @@ class AnalyticsService:
             for message in []
         ]
 
-        detected_intents = []
+        detected_intents = session.intent_history.copy()
 
-        if session.lead.intent:
-            detected_intents.append(
-                session.lead.intent.value
-            )
+        completed_fields, completeness_percentage = (
+            self._calculate_qualification_completeness(session)
+        )
 
         outcome = self._determine_outcome(session)
 
@@ -50,6 +49,12 @@ class AnalyticsService:
             buying_purpose=session.lead.buying_purpose,
             purchase_timeline=session.lead.purchase_timeline,
             interest_level=session.lead.interest_level,
+
+            qualification_fields_completed=completed_fields,
+            qualification_fields_total=5,
+            qualification_completeness_percentage=(
+                completeness_percentage
+            ),
 
             site_visit_status=session.lead.site_visit_status,
 
@@ -83,3 +88,32 @@ class AnalyticsService:
             return ConversationOutcome.NOT_INTERESTED
 
         return ConversationOutcome.ONGOING
+
+    def _calculate_qualification_completeness(
+        self,
+        session: ConversationSession,
+    ) -> tuple[int, float]:
+
+        lead = session.lead
+
+        qualification_fields = [
+            lead.configuration,
+            lead.budget,
+            lead.buying_purpose,
+            lead.purchase_timeline,
+            lead.interest_level,
+        ]
+
+        completed_fields = sum(
+            1
+            for field in qualification_fields
+            if field is not None and str(field).strip()
+        )
+
+        total_fields = len(qualification_fields)
+
+        percentage = (
+            completed_fields / total_fields
+        ) * 100
+
+        return completed_fields, percentage

@@ -56,6 +56,12 @@ def chat(request: ChatRequest):
             extraction,
         )
 
+        if extraction.intent:
+            conversation_service.add_intent(
+                request.session_id,
+                extraction.intent.value,
+            )
+
     except Exception:
         logger.exception("Lead extraction failed")
 

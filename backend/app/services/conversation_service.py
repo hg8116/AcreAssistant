@@ -73,6 +73,18 @@ class ConversationService:
 
         return session
 
+    def add_intent(
+        self,
+        session_id: str,
+        intent: str,
+    ) -> ConversationSession:
+
+        session = self.sessions[session_id]
+
+        session.intent_history.append(intent)
+
+        return session
+
 
 
 
