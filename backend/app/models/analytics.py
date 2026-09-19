@@ -33,3 +33,8 @@ class ConversationAnalytics(BaseModel):
     qualification_fields_completed: int = 0
     qualification_fields_total: int = 5
     qualification_completeness_percentage: float = 0.0
+
+    booking_status: str = "not_requested"
+    booking_id: str | None = None
+
+    is_qualified: bool = False

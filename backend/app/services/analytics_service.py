@@ -34,6 +34,7 @@ class AnalyticsService:
         )
 
         outcome = self._determine_outcome(session)
+        is_qualified = self._is_qualified(session)
 
         return ConversationAnalytics(
             session_id=session.session_id,
@@ -55,6 +56,10 @@ class AnalyticsService:
             qualification_completeness_percentage=(
                 completeness_percentage
             ),
+
+            booking_status=session.booking.status.value,
+            booking_id=session.booking.booking_id,
+            is_qualified=is_qualified,
 
             site_visit_status=session.lead.site_visit_status,
 
@@ -87,6 +92,9 @@ class AnalyticsService:
         if lead.intent and lead.intent.value == "not_interested":
             return ConversationOutcome.NOT_INTERESTED
 
+        if self._is_qualified(session):
+            return ConversationOutcome.QUALIFIED_LEAD
+
         return ConversationOutcome.ONGOING
 
     def _calculate_qualification_completeness(
@@ -117,3 +125,22 @@ class AnalyticsService:
         ) * 100
 
         return completed_fields, percentage
+
+    def _is_qualified(
+        self,
+        session: ConversationSession,
+    ) -> bool:
+
+        lead = session.lead
+
+        required_fields = [
+            lead.configuration,
+            lead.budget,
+            lead.buying_purpose,
+            lead.purchase_timeline,
+        ]
+
+        return all(
+            field is not None and str(field).strip()
+            for field in required_fields
+    )
