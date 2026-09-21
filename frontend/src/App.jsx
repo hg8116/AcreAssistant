@@ -14,7 +14,21 @@ function App() {
   useEffect(() => {
     async function initializeSession() {
       try {
+        const storedSessionId = localStorage.getItem(
+          "acreassistant_session_id"
+        );
+
+        if (storedSessionId) {
+          setSessionId(storedSessionId);
+          return;
+        }
+
         const session = await createSession();
+
+        localStorage.setItem(
+          "acreassistant_session_id",
+          session.session_id
+        );
 
         setSessionId(session.session_id);
       } catch {
@@ -68,6 +82,18 @@ function App() {
     }
   }
 
+  function resetConversation() {
+    localStorage.removeItem(
+      "acreassistant_session_id"
+    );
+
+    setSessionId(null);
+    setMessages([]);
+    setError("");
+
+    window.location.reload();
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -76,7 +102,16 @@ function App() {
           <p>Northstar Homes · Northstar One</p>
         </div>
 
-        <span className="status">AI Assistant</span>
+        <div className="header-actions">
+          <span className="status">AI Assistant</span>
+
+          <button
+            className="reset-button"
+            onClick={resetConversation}
+          >
+            New chat
+          </button>
+        </div>
       </header>
 
       <main className="chat-container">
