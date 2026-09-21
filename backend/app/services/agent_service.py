@@ -1,7 +1,7 @@
 from app.models.session import ConversationSession
 from app.prompts.sales_agent import SYSTEM_PROMPT
 from app.services.llm_service import LLMService
-
+from app.models.booking import SiteVisitBooking
 
 class AgentService:
     def __init__(self, llm_service: LLMService):
@@ -44,3 +44,31 @@ class AgentService:
             lead.preferred_date,
             lead.preferred_time,
         ])
+
+    def is_booking_confirmation(self, message: str) -> bool:
+        confirmation_phrases = {
+            "yes",
+            "yes please",
+            "confirm",
+            "confirmed",
+            "book it",
+            "go ahead",
+            "haan",
+            "han",
+            "ji haan",
+            "kar do",
+            "बुक कर दो",
+        }
+
+        normalized_message = message.strip().lower()
+
+        return normalized_message in confirmation_phrases
+
+    def create_booking_from_session(self, session):
+
+        return SiteVisitBooking(
+            name=session.lead.name,
+            phone=session.lead.phone,
+            preferred_date=session.lead.preferred_date,
+            preferred_time=session.lead.preferred_time,
+        )

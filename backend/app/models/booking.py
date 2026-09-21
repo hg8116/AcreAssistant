@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class BookingStatus(str, Enum):
     NOT_REQUESTED = "not_requested"
+    AWAITING_CONFIRMATION = "awaiting_confirmation"
     PENDING = "pending"
     CONFIRMED = "confirmed"
     FAILED = "failed"
