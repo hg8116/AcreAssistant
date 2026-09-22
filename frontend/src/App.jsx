@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { createSession, sendMessage } from "./services/api";
+import { createSession, sendMessage, getMessages } from "./services/api";
 import "./index.css";
 
 
@@ -19,7 +19,13 @@ function App() {
         );
 
         if (storedSessionId) {
+          const history = await getMessages(
+            storedSessionId
+          );
+
           setSessionId(storedSessionId);
+          setMessages(history.messages);
+
           return;
         }
 
@@ -32,7 +38,11 @@ function App() {
 
         setSessionId(session.session_id);
       } catch {
-        setError("Unable to start conversation.");
+        localStorage.removeItem(
+          "acreassistant_session_id"
+        );
+
+        setError("Unable to load conversation.");
       }
     }
 

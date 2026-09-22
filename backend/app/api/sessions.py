@@ -36,6 +36,21 @@ def get_analytics(session_id: str):
         session
     )
 
+@router.get("/{session_id}/messages")
+def get_messages(session_id: str):
+    session = conversation_service.get_session(session_id)
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Session not found",
+        )
+
+    return {
+        "session_id": session.session_id,
+        "messages": session.messages,
+    }
+
 @router.get("/{session_id}")
 def get_session(session_id: str):
 

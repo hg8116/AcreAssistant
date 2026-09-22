@@ -30,3 +30,15 @@ export async function sendMessage(sessionId, message) {
 
   return response.json();
 }
+
+export async function getMessages(sessionId) {
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/messages`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load conversation");
+  }
+
+  return response.json();
+}
