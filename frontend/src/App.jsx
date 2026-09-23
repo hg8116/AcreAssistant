@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { createSession, sendMessage, getMessages } from "./services/api";
+import { createSession, sendMessage, getMessages, getSession } from "./services/api";
 import "./index.css";
-
 
 function App() {
   const [sessionId, setSessionId] = useState(null);
@@ -10,6 +9,7 @@ function App() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sessionDetails, setSessionDetails] = useState(null);
 
   useEffect(() => {
     async function initializeSession() {
@@ -19,14 +19,27 @@ function App() {
         );
 
         if (storedSessionId) {
-          const history = await getMessages(
-            storedSessionId
-          );
+          try {
+            const [history, details] = await Promise.all([
+              getMessages(storedSessionId),
+              getSession(storedSessionId),
+            ]);
 
-          setSessionId(storedSessionId);
-          setMessages(history.messages);
+            setSessionId(storedSessionId);
+            setMessages(history.messages);
+            setSessionDetails(details);
 
-          return;
+            return;
+          } catch (error) {
+            console.warn(
+              "Stored session unavailable. Creating a new session.",
+              error
+            );
+
+            localStorage.removeItem(
+              "acreassistant_session_id"
+            );
+          }
         }
 
         const session = await createSession();
@@ -37,6 +50,7 @@ function App() {
         );
 
         setSessionId(session.session_id);
+        setSessionDetails(session);
       } catch {
         localStorage.removeItem(
           "acreassistant_session_id"
@@ -48,6 +62,10 @@ function App() {
 
     initializeSession();
   }, []);
+
+  function handleQuickReply(message) {
+    setInput(message);
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -85,6 +103,11 @@ function App() {
           content: response.reply,
         },
       ]);
+
+      const updatedSession = await getSession(sessionId);
+
+      setSessionDetails(updatedSession);
+
     } catch {
       setError("Unable to send message. Please try again.");
     } finally {
@@ -131,6 +154,77 @@ function App() {
             Ask me about Northstar One in Sector 79,
             Gurugram.
           </p>
+        </div>
+
+        {sessionDetails?.booking?.status &&
+          sessionDetails.booking.status !== "not_requested" && (
+            <div className="booking-panel">
+              <h3>Site Visit</h3>
+
+              <p>
+                <strong>Status:</strong>{" "}
+                {sessionDetails.booking.status}
+              </p>
+
+              {sessionDetails.booking.preferred_date && (
+                <p>
+                  <strong>Date:</strong>{" "}
+                  {sessionDetails.booking.preferred_date}
+                </p>
+              )}
+
+              {sessionDetails.booking.preferred_time && (
+                <p>
+                  <strong>Time:</strong>{" "}
+                  {sessionDetails.booking.preferred_time}
+                </p>
+              )}
+
+              {sessionDetails.booking.booking_id && (
+                <p>
+                  <strong>Booking ID:</strong>{" "}
+                  {sessionDetails.booking.booking_id}
+                </p>
+              )}
+
+              {sessionDetails.booking.failure_reason && (
+                <p className="error">
+                  {sessionDetails.booking.failure_reason}
+                </p>
+              )}
+            </div>
+          )}
+
+        <div className="quick-replies">
+          <p>Quick questions</p>
+
+          <button
+            type="button"
+            onClick={() => handleQuickReply("What is the starting price of 2 BHK?")}
+          >
+            2 BHK pricing
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickReply("What is the starting price of 3 BHK?")}
+          >
+            3 BHK pricing
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickReply("I want to schedule a site visit.")}
+          >
+            Schedule a site visit
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickReply("I want to talk to a representative.")}
+          >
+            Talk to a representative
+          </button>
         </div>
 
         <div className="messages">

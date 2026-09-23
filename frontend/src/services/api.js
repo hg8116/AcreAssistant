@@ -42,3 +42,15 @@ export async function getMessages(sessionId) {
 
   return response.json();
 }
+
+export async function getSession(sessionId) {
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load session");
+  }
+
+  return response.json();
+}
