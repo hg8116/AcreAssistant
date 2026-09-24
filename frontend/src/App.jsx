@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { createSession, sendMessage, getMessages, getSession } from "./services/api";
 import "./index.css";
@@ -10,6 +10,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [sessionDetails, setSessionDetails] = useState(null);
+
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     async function initializeSession() {
@@ -62,6 +64,12 @@ function App() {
 
     initializeSession();
   }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
 
   function handleQuickReply(message) {
     setInput(message);
@@ -239,9 +247,15 @@ function App() {
 
           {isLoading && (
             <div className="message assistant">
-              Thinking...
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
             </div>
           )}
+
+          <div ref={messagesEndRef} />
         </div>
 
         {error && (
