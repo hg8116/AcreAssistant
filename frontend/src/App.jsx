@@ -75,6 +75,10 @@ function App() {
     setInput(message);
   }
 
+  function clearError() {
+    setError("");
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -259,7 +263,19 @@ function App() {
         </div>
 
         {error && (
-          <p className="error">{error}</p>
+          <div className="error-container">
+            <p className="error">
+              {error}
+            </p>
+
+            <button
+              type="button"
+              className="retry-button"
+              onClick={clearError}
+            >
+              Dismiss
+            </button>
+          </div>
         )}
 
         <form
